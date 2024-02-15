@@ -1,16 +1,18 @@
-const siz = 70
+let siz;
 function setup() {
-  createCanvas(500, 500);
+  let wWid = Math.min(windowWidth, 500)
+  createCanvas(wWid, wWid);
   noLoop()
   noFill()
   textSize(siz)
   textAlign(CENTER, CENTER)
+  siz = (wWid / 6) * 0.8;
 }
 
 arr = [['', '', ''], ['', '', ''], ['', '', '']]
 function draw() {
   if (isX) { // this ai is stupid and needs the handicap of first move
-  	let [r, c] = computerMove(isX);
+    let [r, c] = computerMove(isX);
     arr[r][c] = isX ? 'x' : 'o'
     moven++;
     isX = !isX
@@ -57,7 +59,7 @@ let moven = 0;
 let lastplayermove = null
 function computerMove(iAmX) {
 	const emptyspots = [];
-  for (let r = 0; r < 3; r++) emptyspots[r] = [true,true,true]
+	for (let r = 0; r < 3; r++) emptyspots[r] = [true,true,true]
 
 	if (arr[1][1] === '') return [1, 1];
 	else emptyspots[1][1] = false;
@@ -69,9 +71,8 @@ function computerMove(iAmX) {
 	}
 
 	for (let r = 0; r < 3; r++)
-  for (let c = 0; c < 3; c++)
-	if (arr[r][c] !== '') emptyspots[r][c] = false;
-	let spots = emptyspots.flatMap((row, r) => row.map((cell, c) => cell ? [r,c] : null).filter(c=>c));
+	for (let c = 0; c < 3; c++)
+		if (arr[r][c] !== '') emptyspots[r][c] = false;
 
 	let almostEnemyWins = [];
 	function iter(items, coords) {
@@ -91,15 +92,13 @@ function computerMove(iAmX) {
 		let n = iter(arr.map(r => r[c]), [[0, c], [1, c], [2, c]]);
 		if (n) return n;
 	}
-  for (let p = 0; p < 2; p++) {
-  	let co = [[0, p ? 0 : 2], [1, 1], [2, p ? 2 : 0]];
-  	let n = iter(co.map(([r,c]) => arr[r][c]), co)
-  	if (n) return n;
-  }
-  if (almostEnemyWins.length > 0) {
-  	return almostEnemyWins[0];
-  }
-
+	for (let p = 0; p < 2; p++) {
+		let co = [[0, p ? 0 : 2], [1, 1], [2, p ? 2 : 0]];
+		let n = iter(co.map(([r,c]) => arr[r][c]), co);
+		if (n) return n;
+	}
+	if (almostEnemyWins.length > 0) return almostEnemyWins[0];
+	let spots = emptyspots.flatMap((row, r) => row.map((cell, c) => cell ? [r,c] : null).filter(c=>c));
 	return spots[Math.floor(Math.random() * spots.length)];
 }
 
